@@ -1,16 +1,16 @@
-# Fifths
+# fifths
 
-A command-line instrument tuner. Play a note; it reports the pitch, nearest note, and cents sharp or flat.
+Terminal tuner. You play a note and it tells you the pitch, the closest note name, and how many cents sharp or flat you are.
 
-This first commit is just the skeleton: a CMake build and frequency → note conversion. Live audio and pitch detection come next.
+Not there yet. Right now this is just the CMake project and the frequency-to-note conversion (`A4 = 440 Hz`). Mic capture and pitch detection come after that.
 
-## Build
+## build
 
-```bash
+```
 cmake -S . -B build
 cmake --build build
 ```
 
-Then run `build/fifths` (or `build/Debug/fifths.exe` on Windows).
+That should spit out `build/fifths`, or `build/Debug/fifths.exe` if you're on Windows.
 
-Requires CMake 3.20+ and a C++20 compiler.
+CMake 3.20+ and C++20.
