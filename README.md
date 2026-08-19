@@ -2,7 +2,7 @@
 
 Terminal tuner. You play a note and it tells you the pitch, the closest note name, and how many cents sharp or flat you are.
 
-Not there yet. Right now this is just the CMake project and the frequency-to-note conversion (`A4 = 440 Hz`). Mic capture and pitch detection come after that.
+No mic yet. It fakes a 110 Hz sine (A2), pushes it through a lock-free ring buffer, then guesses the pitch with autocorrelation.
 
 ## build
 
