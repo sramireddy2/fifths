@@ -14,3 +14,6 @@ inline constexpr std::size_t kRingCapacity = 8192;
 // Search range for autocorrelation. Low E on guitar is ~82 Hz.
 inline constexpr double kMinHz = 70.0;
 inline constexpr double kMaxHz = 1000.0;
+
+// Below this RMS we treat the window as silence, not a note.
+inline constexpr float kSilenceRms = 0.01f;

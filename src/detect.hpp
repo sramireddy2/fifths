@@ -2,7 +2,20 @@
 
 #include "config.hpp"
 
+#include <cmath>
 #include <span>
+
+// How loud the window is. Quiet rooms sit near 0; a played note is bigger.
+inline float rms(std::span<const float> samples) {
+    if (samples.empty()) {
+        return 0.0f;
+    }
+    double acc = 0.0;
+    for (float x : samples) {
+        acc += static_cast<double>(x) * static_cast<double>(x);
+    }
+    return static_cast<float>(std::sqrt(acc / static_cast<double>(samples.size())));
+}
 
 // Autocorrelation: try every lag in range and keep the one where the
 // signal lines up with itself the most. Period (seconds) = lag / sample_rate,

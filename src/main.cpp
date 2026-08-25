@@ -40,6 +40,11 @@ int main() {
         }
         filled = 0;
 
+        if (rms(window) < kSilenceRms) {
+            std::cout << "(quiet)\n";
+            continue;
+        }
+
         const double hz = estimate_frequency(window);
         std::cout << format_pitch(frequency_to_pitch(hz)) << '\n';
     }
