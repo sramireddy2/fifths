@@ -1,33 +1,48 @@
+#include "audio.hpp"
 #include "config.hpp"
 #include "detect.hpp"
 #include "note.hpp"
 #include "ring_buffer.hpp"
 
-#include <cmath>
+#include <atomic>
+#include <chrono>
+#include <csignal>
 #include <iostream>
-#include <numbers>
+#include <thread>
 #include <vector>
 
+static std::atomic<bool> g_running{true};
+
+extern "C" void handle_sigint(int) {
+    g_running = false;
+}
+
 int main() {
-    std::cout << "fifths\n\n";
+    std::signal(SIGINT, handle_sigint);
 
     RingBuffer ring(kRingCapacity);
-
-    // Stand-in for the mic: one window of a pure A2.
-    const double played_hz = 110.0;
-    std::vector<float> fake_mic(kWindow);
-    for (std::size_t i = 0; i < fake_mic.size(); ++i) {
-        fake_mic[i] = static_cast<float>(std::sin(2.0 * std::numbers::pi * played_hz *
-                                                 static_cast<double>(i) / kSampleRate));
+    AudioCapture mic(ring);
+    if (!mic.ok()) {
+        std::cerr << "couldn't open the mic\n";
+        return 1;
     }
 
-    ring.write(fake_mic);
-
     std::vector<float> window(kWindow);
-    const std::size_t got = ring.read(window);
-    const double heard_hz = estimate_frequency({window.data(), got});
+    std::size_t filled = 0;
 
-    std::cout << "played  " << format_pitch(frequency_to_pitch(played_hz)) << '\n';
-    std::cout << "heard   " << format_pitch(frequency_to_pitch(heard_hz)) << '\n';
+    std::cout << "play a note (ctrl+c to quit)\n";
+
+    while (g_running) {
+        filled += ring.read({window.data() + filled, window.size() - filled});
+        if (filled < window.size()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            continue;
+        }
+        filled = 0;
+
+        const double hz = estimate_frequency(window);
+        std::cout << format_pitch(frequency_to_pitch(hz)) << '\n';
+    }
+
     return 0;
 }
