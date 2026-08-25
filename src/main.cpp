@@ -1,6 +1,7 @@
 #include "audio.hpp"
 #include "config.hpp"
 #include "detect.hpp"
+#include "display.hpp"
 #include "note.hpp"
 #include "ring_buffer.hpp"
 
@@ -40,14 +41,16 @@ int main() {
         }
         filled = 0;
 
-        if (rms(window) < kSilenceRms) {
-            std::cout << "(quiet)\n";
+        const bool quiet = rms(window) < kSilenceRms;
+        if (quiet) {
+            print_tuner_line({}, true);
             continue;
         }
 
         const double hz = estimate_frequency(window);
-        std::cout << format_pitch(frequency_to_pitch(hz)) << '\n';
+        print_tuner_line(frequency_to_pitch(hz), false);
     }
 
+    std::cout << '\n';
     return 0;
 }
