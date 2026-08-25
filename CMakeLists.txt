@@ -6,4 +6,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(fifths src/main.cpp)
-target_include_directories(fifths PRIVATE src)
+target_include_directories(fifths PRIVATE src third_party)
