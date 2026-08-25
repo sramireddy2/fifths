@@ -5,5 +5,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(fifths src/main.cpp)
+add_executable(fifths src/main.cpp src/audio.cpp)
 target_include_directories(fifths PRIVATE src third_party)
+
+if (WIN32)
+    target_link_libraries(fifths PRIVATE ole32)
+endif()
