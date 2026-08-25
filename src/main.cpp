@@ -4,6 +4,7 @@
 #include "display.hpp"
 #include "note.hpp"
 #include "ring_buffer.hpp"
+#include "smooth.hpp"
 
 #include <atomic>
 #include <chrono>
@@ -30,6 +31,7 @@ int main() {
 
     std::vector<float> window(kWindow);
     std::size_t filled = 0;
+    PitchSmoother smoother;
 
     std::cout << "play a note (ctrl+c to quit)\n";
 
@@ -43,11 +45,12 @@ int main() {
 
         const bool quiet = rms(window) < kSilenceRms;
         if (quiet) {
+            smoother.reset();
             print_tuner_line({}, true);
             continue;
         }
 
-        const double hz = estimate_frequency(window);
+        const double hz = smoother.push(estimate_frequency(window));
         print_tuner_line(frequency_to_pitch(hz), false);
     }
 

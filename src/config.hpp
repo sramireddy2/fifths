@@ -17,3 +17,6 @@ inline constexpr double kMaxHz = 1000.0;
 
 // Below this RMS we treat the window as silence, not a note.
 inline constexpr float kSilenceRms = 0.01f;
+
+// Blend of new estimate vs old. 1 = trust this frame only, 0 = never move.
+inline constexpr double kEmaAlpha = 0.35;
