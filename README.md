@@ -1,12 +1,12 @@
 # fifths
 
 ```
-  A2  ───────●────────  +3¢
+  A2  [--------|*--------]  +3 cents
 ```
 
 Terminal tuner. You play a note, it tells you what it is and how many cents you're off — same idea as a Snark or Fender Tune, just in the command line.
 
-No mic yet. Right now it fakes a 110 Hz sine (that's A2), pushes it through a lock-free ring buffer, and guesses the pitch with autocorrelation. The note-name / cents math already works.
+It listens on your default mic. Autocorrelation guesses the pitch, then we map that to a note name. If it starts locking onto the wrong octave on a real guitar, that's a known limit of this first detector.
 
 ## stack
 
@@ -14,11 +14,11 @@ No mic yet. Right now it fakes a 110 Hz sine (that's A2), pushes it through a lo
 | --- | --- |
 | language | C++20 |
 | build | CMake 3.20+ |
-| audio | [miniaudio](https://miniaud.io) (not dropped in yet) |
-| pitch | autocorrelation first, YIN or MPM if it starts picking the wrong octave |
+| audio | [miniaudio](https://miniaud.io) 0.11.25 |
+| pitch | autocorrelation (YIN later if the octave bugs show up) |
 | threads | SPSC ring buffer, `std::atomic`, no mutex on the audio path |
 
-Also the usual modern C++ stuff: `std::vector` with `reserve`, `std::span` for views, RAII around the device once audio exists, `constexpr` for the note table.
+Also: `std::vector` with the analysis window allocated once, `std::span` for views, RAII around the capture device, `constexpr` for the note table.
 
 ## build
 
@@ -28,3 +28,5 @@ cmake --build build
 ```
 
 Binary lands at `build/fifths`, or `build/Debug/fifths.exe` on Windows.
+
+Windows may ask for microphone permission the first time. Play a note; quit with ctrl+c.
