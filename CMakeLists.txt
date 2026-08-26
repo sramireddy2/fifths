@@ -11,3 +11,8 @@ target_include_directories(fifths PRIVATE src third_party)
 if (WIN32)
     target_link_libraries(fifths PRIVATE ole32)
 endif()
+
+enable_testing()
+add_executable(fifths_tests tests/test_fifths.cpp)
+target_include_directories(fifths_tests PRIVATE src)
+add_test(NAME fifths_tests COMMAND fifths_tests)
